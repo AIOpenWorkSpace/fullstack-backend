@@ -8,7 +8,7 @@ mongoose.connect(process.env.DB_URL);
 const Movie = require('./models/movie.js');
 
 async function seed() {
-  let createdMovie; // Declare the variable outside the try block
+  let createdMovie;
 
   try {
     createdMovie = await Movie.create({

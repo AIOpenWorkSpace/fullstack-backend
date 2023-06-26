@@ -6,12 +6,16 @@ const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
 const Movie = require('./models/movie');
-// const axios = require('axios');
+const axios = require('axios');
+const { Configuration, OpenAIApi } = require("openai");
 
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API,
+});
+const openai = new OpenAIApi(configuration);
 
 //MIDDLEWARE
 app.use(cors());
-
 app.use(express.json());
 
 
@@ -19,12 +23,6 @@ const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => console.log(`We are running on ${PORT}!`));
 
 mongoose.connect(process.env.DB_URL);
-
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
-  console.log('Mongoose is connected');
-});
 
 
 app.get('/test', (request, response) => {
@@ -60,8 +58,26 @@ async function addMovie(request, response, next){
   }
 }
 
+app.post('/ask', async (req, res) => {
+  const { prompt } = req.body;
+
+  try {
+    const completion = await openai.createCompletion({
+      model: "text-davinci-003",
+      max_tokens: 500,
+      temperature: 0,
+      prompt: prompt,
+    });
+
+    res.send(completion.data.choices[0].text);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('*', (request, response) => {
   response.status(404).send('Sorry, page not found');
+  console.log('404 - Page not found');
 });
 
 
