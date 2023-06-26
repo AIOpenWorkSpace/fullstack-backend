@@ -5,7 +5,7 @@ require('dotenv').config();
 const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
-const { Movie, parseMovieData } = require('./models/movie');
+const { Movie, parseMovieData, getPoster } = require('./models/movie');
 const axios = require('axios');
 const { Configuration, OpenAIApi } = require("openai");
 
@@ -58,8 +58,9 @@ async function addMovie(request, response, next){
   }
 }
 
-app.post('/ask', async (req, res) => {
+app.post('/ask/:title', async (req, res) => {
   const { prompt } = req.body;
+  const { title } = req.params;
 
   try {
     const completion = await openai.createChatCompletion({
@@ -72,7 +73,8 @@ app.post('/ask', async (req, res) => {
       ]
     });
 
-    const parsedMovieData = parseMovieData("test title", completion.data.choices[0].message.content);
+    const parsedMovieData = parseMovieData(title, completion.data.choices[0].message.content);
+    parsedMovieData.imageURL = await getPoster(title);
     
 
     res.status(200).json({
