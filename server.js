@@ -5,7 +5,7 @@ require('dotenv').config();
 const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
-const Movie = require('./models/movie');
+const { Movie, parseMovieData } = require('./models/movie');
 const axios = require('axios');
 const { Configuration, OpenAIApi } = require("openai");
 
@@ -72,8 +72,11 @@ app.post('/ask', async (req, res) => {
       ]
     });
 
+    const parsedMovieData = parseMovieData("test title", completion.data.choices[0].message.content);
+    
+
     res.status(200).json({
-      data: completion.data.choices[0].message.content
+      data: parsedMovieData
     })
   } catch (error) {
     res.status(500).json({ error: error.message });
