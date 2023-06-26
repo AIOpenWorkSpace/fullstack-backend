@@ -62,14 +62,19 @@ app.post('/ask', async (req, res) => {
   const { prompt } = req.body;
 
   try {
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      max_tokens: 500,
-      temperature: 0,
-      prompt: prompt,
+    const completion = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ]
     });
 
-    res.send(completion.data.choices[0].text);
+    res.status(200).json({
+      data: completion.data.choices[0].message.content
+    })
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
