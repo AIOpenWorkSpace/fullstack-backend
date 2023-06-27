@@ -31,19 +31,19 @@ app.get('/test', (request, response) => {
 
 });
 
-app.get('/movies', getMovies);
+// app.get('/movies', getMovies);
 
-async function getMovies(request, response, next){
-  try {
-    // GET ALL movies FROM THE DB
-    let allMovies = await Movie.find({});
+// async function getMovies(request, response, next){
+//   try {
+//     // GET ALL movies FROM THE DB
+//     let allMovies = await Movie.find({});
 
-    // TODO: SEND THOSE movies ON THE RESPONSE
-    response.status(200).send(allMovies);
-  } catch (error) {
-    next(error);
-  }
-}
+//     // TODO: SEND THOSE movies ON THE RESPONSE
+//     response.status(200).send(allMovies);
+//   } catch (error) {
+//     next(error);
+//   }
+// }
 
 app.post('/movies', addMovie);
 
@@ -58,30 +58,59 @@ async function addMovie(request, response, next){
   }
 }
 
-app.post('/ask', async (req, res) => {
-  const { prompt } = req.body;
+// app.post('/ask', async (req, res) => {
+//   const { prompt } = req.body;
 
-  try {
-    const completion = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'user',
-          content: prompt
-        }
-      ]
-    });
+//   try {
+//     const completion = await openai.createChatCompletion({
+//       model: 'gpt-3.5-turbo',
+//       messages: [
+//         {
+//           role: 'user',
+//           content: prompt
+//         }
+//       ]
+//     });
 
-    const parsedMovieData = parseMovieData("test title", completion.data.choices[0].message.content);
+
+
+//     const parsedMovieData = parseMovieData("test title", completion.data.choices[0].message.content);
     
 
-    res.status(200).json({
-      data: parsedMovieData
-    })
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+//     res.status(200).json({
+//       data: parsedMovieData
+//     })
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+app.post('/ask/:title', async (req, res) => {
+  const { prompt } = req.body;
+  const { title } = req.params;
+  
+  
+  try {
+  const completion = await openai.createChatCompletion({
+  model: 'gpt-3.5-turbo',
+  messages: [
+  {
+  role: 'user',
+  content: prompt
   }
-});
+  ]
+  });
+  
+  
+  const parsedMovieData = parseMovieData(title, completion.data.choices[0].message.content);
+  parsedMovieData.imageURL = await getPoster(title);
+  
+  
+  res.status(200).json({
+  data: parsedMovieData
+  })
+  } catch (error) {
+  res.status(500).json({ error: error.message });
 
 app.get('*', (request, response) => {
   response.status(404).send('Sorry, page not found');
@@ -93,5 +122,46 @@ app.use((error, request, response, next) => {
   console.log(error.message);
   response.status(500).send(error.message);
 });
+}
+});
+
+
+
+//delete jenn
+app.delete('/movies/:id', deleteMovie);
+
+
+async function deleteMovie(request, response, next) {
+const { id } = request.params;
+
+
+try {
+await Movie.findByIdAndDelete(id);
+
+
+response.status(200).send('Movie deleted successfully');
+} catch (error) {
+next(error);
+}
+}
+
+
+// updated jenn
+app.get('/movies', getMovies);
+
+
+async function getMovies(request, response, next) {
+try {
+// GET ALL movies FROM THE DB
+let allMovies = await Movie.find({});
+
+
+// TODO: SEND THOSE movies ON THE RESPONSE
+response.status(200).send(allMovies.map(movie => ({ ...movie.toObject(), id: movie._id })));
+} catch (error) {
+next(error);
+}
+}
+
 
 
