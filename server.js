@@ -85,6 +85,32 @@ app.post('/ask/:title', async (req, res) => {
   }
 });
 
+app.delete('/movies/:movieID', deleteMovie);
+
+async function deleteMovie(request, response, next){
+  try {
+    let id=request.params.movieID;
+    await Movie.findByIdAndDelete(id);
+    response.status(200).send('Movie was deleted from database');
+  } catch (error) {
+    next(error);
+  }
+}
+
+app.put('/movies/:movieID', updateMovie);
+
+async function updateMovie(request, response, next){
+  try {
+    let id = request.params.movieID;
+    let data = request.body;
+
+    let updatedMovie = await Movie.findByIdAndUpdate(id, data, { new: true, overwrite: true});
+    response.status(200).send(updatedMovie);
+  } catch (error) {
+    next(error);
+  }
+}
+
 app.get('*', (request, response) => {
   response.status(404).send('Sorry, page not found');
   console.log('404 - Page not found');

@@ -7,7 +7,6 @@ const { Schema } = mongoose;
 function parseMovieData(title, data) {
   const startIndex = data.indexOf('Language Usage');
   const stripped = data.substring(startIndex);
-  console.log(stripped);
   const sections = stripped.split ('\n\n');
 
   return {
@@ -26,9 +25,7 @@ function parseMovieData(title, data) {
 async function getPoster(title) {
   try {
     let movieURL = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${title}`;
-    console.log(movieURL);
     let movieDataFromAxios = await axios.get(movieURL);
-    console.log(movieDataFromAxios.data.results[0].poster_path);
     if (movieDataFromAxios.data.results){
       return movieDataFromAxios.data.results[0].poster_path;
     } else {
