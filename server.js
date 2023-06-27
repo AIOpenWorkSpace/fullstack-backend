@@ -33,19 +33,19 @@ app.get('/test', (request, response) => {
 
 });
 
-app.get('/movies', getMovies);
+// app.get('/movies', getMovies);
 
-async function getMovies(request, response, next){
-  try {
-    // GET ALL movies FROM THE DB
-    let allMovies = await Movie.find({});
+// async function getMovies(request, response, next){
+//   try {
+//     // GET ALL movies FROM THE DB
+//     let allMovies = await Movie.find({});
 
-    // TODO: SEND THOSE movies ON THE RESPONSE
-    response.status(200).send(allMovies);
-  } catch (error) {
-    next(error);
-  }
-}
+//     // TODO: SEND THOSE movies ON THE RESPONSE
+//     response.status(200).send(allMovies);
+//   } catch (error) {
+//     next(error);
+//   }
+// }
 
 
 app.post('/ask/:title', async (req, res) => {
@@ -75,6 +75,19 @@ app.post('/ask/:title', async (req, res) => {
   }
 });
 
+
+
+//delete jenn
+app.delete('/movies/:id', deleteMovie);
+
+async function deleteMovie(request, response, next) {
+  const { id } = request.params;
+
+  try {
+    await Movie.findByIdAndDelete(id);
+
+    response.status(200).send('Movie deleted successfully');
+
 //app.use(auth);
 
 app.post('/movies', addMovie);
@@ -90,6 +103,18 @@ async function addMovie(request, response, next){
   }
 }
 
+
+// updated jenn
+app.get('/movies', getMovies);
+
+async function getMovies(request, response, next) {
+  try {
+    // GET ALL movies FROM THE DB
+    let allMovies = await Movie.find({});
+
+    // TODO: SEND THOSE movies ON THE RESPONSE
+    response.status(200).send(allMovies.map(movie => ({ ...movie.toObject(), id: movie._id })));
+    
 app.delete('/movies/:movieID', deleteMovie);
 
 async function deleteMovie(request, response, next){
@@ -97,10 +122,38 @@ async function deleteMovie(request, response, next){
     let id=request.params.movieID;
     await Movie.findByIdAndDelete(id);
     response.status(200).send('Movie was deleted from database');
+
   } catch (error) {
     next(error);
   }
 }
+
+
+// Update movie description
+// app.put('/movies/:id', updateMovieDescription);
+
+// async function updateMovieDescription(request, response, next) {
+//   const { id } = request.params;
+//   const { description } = request.body;
+
+//   try {
+//     let movie = await Movie.findById(id);
+
+//     if (!movie) {
+//       return response.status(404).send('Movie not found');
+//     }
+//     movie.description = description;
+//     await movie.save();
+
+//     response.status(200).send('Updated Successfully');
+//   } catch (error) {
+//     next(error);
+//   }
+// }
+
+
+
+
 
 app.put('/movies/:movieID', updateMovie);
 
