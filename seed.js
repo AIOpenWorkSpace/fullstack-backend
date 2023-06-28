@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 mongoose.connect(process.env.DB_URL);
 
-const Movie = require('./models/movie.js');
+const { Movie } = require('./models/movie');
 
 async function seed() {
   let createdMovie;
