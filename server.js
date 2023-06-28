@@ -81,11 +81,13 @@ app.get('/movies', getMovies);
 
 async function getMovies(request, response, next){
   try {
+    const userEmail = request.query.userEmail;
+    const query = userEmail ? {user: userEmail} : {};
     // GET ALL movies FROM THE DB
-    let allMovies = await Movie.find({});
+    let movies = await Movie.find(query);
 
     // TODO: SEND THOSE movies ON THE RESPONSE
-    response.status(200).send(allMovies);
+    response.status(200).send(movies);
   } catch (error) {
     next(error);
   }
