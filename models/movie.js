@@ -1,12 +1,12 @@
 'use strict';
 
+const axios = require('axios');
 const mongoose =require('mongoose');
 const { Schema } = mongoose;
 
 function parseMovieData(title, data) {
   const startIndex = data.indexOf('Language Usage');
   const stripped = data.substring(startIndex);
-  console.log(stripped);
   const sections = stripped.split ('\n\n');
 
   return {
@@ -22,13 +22,22 @@ function parseMovieData(title, data) {
   };
 }
 
-// async function getPoster(req, res, next) {
-//   try {
-//     let movie=request.query
-//   } catch () {
+async function getPoster(title) {
+  try {
+    let movieURL = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${title}`;
+    let movieDataFromAxios = await axios.get(movieURL);
+    if (movieDataFromAxios.data.results){
+      return movieDataFromAxios.data.results[0].poster_path;
+    } else {
+      return;
+    }
     
-//   }
-// }
+  } catch (error) {
+    console.error('No Movie Found');
+  }
+
+
+}
 
 
 
@@ -56,4 +65,4 @@ const movieSchema = new Schema ({
 
 const Movie = mongoose.model('movie', movieSchema);
 
-module.exports = {Movie, parseMovieData};
+module.exports = {Movie, parseMovieData, getPoster};
