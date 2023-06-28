@@ -62,7 +62,7 @@ app.post('/ask/:title', async (req, res) => {
 });
 
 
-app.use(auth);
+// app.use(auth);
 
 app.post('/movies', addMovie);
 

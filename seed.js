@@ -12,7 +12,7 @@ async function seed() {
 
   try {
     createdMovie = await Movie.create({
-      title: "Test Movie",
+      title: "Aaron Clark New Test",
       languageRating: 7,
       languageDescription: "Some Description",
       drugRating: 5,
