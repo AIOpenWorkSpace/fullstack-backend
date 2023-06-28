@@ -69,7 +69,7 @@ app.post('/movies', addMovie);
 async function addMovie(request, response, next){
   console.log(request.body);
   try {
-    let createdMovie = await Movie.create(request.body);
+    let createdMovie = await Movie.create({...request.body, user: request.user.email});
 
     response.status(200).send(createdMovie);
   } catch (error) {
