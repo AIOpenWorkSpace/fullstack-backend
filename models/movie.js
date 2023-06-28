@@ -27,7 +27,7 @@ async function getPoster(title) {
     let movieURL = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${title}`;
     let movieDataFromAxios = await axios.get(movieURL);
     if (movieDataFromAxios.data.results){
-      return movieDataFromAxios.data.results[0].poster_path;
+      return `https://image.tmdb.org/t/p/original${movieDataFromAxios.data.results[0].poster_path}`
     } else {
       return;
     }
