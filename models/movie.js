@@ -60,7 +60,7 @@ const movieSchema = new Schema ({
   productRating: {type: Number},
   productDescription: { type: String, required: true },
   user: { type: String},
-  imageUrl: { type: String}
+  imageURL: { type: String}
 });
 
 const Movie = mongoose.model('movie', movieSchema);
